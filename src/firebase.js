@@ -41,7 +41,7 @@ initializeAppCheck(app, {
 const rc = getRemoteConfig(app);
 rc.settings.minimumFetchIntervalMillis = 60 * 60 * 1000;
 rc.defaultConfig = {
-  cloud_model: "gemini-3.8-flash",
+  cloud_model: "gemini-3.5-flash-lite",
   reading_level: "a 12-year-old",
 };
 export async function loadRemoteConfig() {

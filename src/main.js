@@ -20,8 +20,8 @@ const els = {
   deviceState: $("deviceState"),
 };
 
-const FALLBACK_CLOUD_MODEL = "gemini-3.5-flash-lite";
-let config = { cloudModel: "gemini-3.8-flash", readingLevel: "a 12-year-old" };
+const FALLBACK_CLOUD_MODEL = "gemini-3.8-flash";
+let config = { cloudModel: "gemini-3.5-flash-lite", readingLevel: "a 12-year-old" };
 let deviceModelReady = false;
 
 // ---- On-device availability -------------------------------------------------
@@ -128,7 +128,7 @@ async function explain() {
     for (const [i, name] of cloudModels.entries()) {
       try {
         const m = name ? makeModel(mode, name) : model;
-        const stream = await m.generateContentStream(prompt);
+        const stream = await m.generateContentStream(prompt, name ? { timeout: 25000 } : undefined);
         let acc = "";
         for await (const chunk of stream.stream) {
           acc += chunk.text();
@@ -138,7 +138,7 @@ async function explain() {
         usedModel = name;
         break;
       } catch (e) {
-        const busy = /\b(429|500|503)\b|high demand|overloaded|unavailable/i.test(String(e.message || e));
+        const busy = /\b(429|500|503)\b|high demand|overloaded|unavailable|timeout|timed out|abort/i.test(String(e.message || e));
         if (!busy || i === cloudModels.length - 1) throw e;
         console.warn(`[ReportSaathi] ${name} busy, trying ${cloudModels[i + 1]}`);
         setStatus("Cloud model busy, retrying with a lighter model…");
