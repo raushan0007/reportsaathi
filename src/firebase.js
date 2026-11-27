@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import {
   initializeAppCheck,
-  ReCaptchaEnterpriseProvider,
+  ReCaptchaV3Provider,
 } from "firebase/app-check";
 import {
   getAI,
@@ -33,9 +33,7 @@ if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
     import.meta.env.VITE_APPCHECK_DEBUG_TOKEN || true;
 }
 initializeAppCheck(app, {
-  provider: new ReCaptchaEnterpriseProvider(
-    import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY
-  ),
+  provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
   isTokenAutoRefreshEnabled: true,
 });
 

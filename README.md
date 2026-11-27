@@ -33,7 +33,7 @@ The UI always shows where inference happened (using `response.inferenceSource`) 
 ## Firebase products used
 
 - **Firebase AI Logic** (Web SDK, `firebase/ai`): `getGenerativeModel` with `HybridParams`, `initializeDeviceModel`, `generateContent` (image), `generateContentStream` (text), `inferenceSource`. See [`src/firebase.js`](src/firebase.js) and [`src/main.js`](src/main.js).
-- **App Check** with reCAPTCHA Enterprise (debug token on localhost).
+- **App Check** with reCAPTCHA v3 (debug token on localhost).
 - **Remote Config**: cloud model name and reading level can be tuned without a redeploy.
 - **Firebase Hosting**.
 
@@ -43,11 +43,11 @@ Requirements: Node 20+, Chrome 139+ on desktop, with `chrome://flags/#prompt-api
 
 ```bash
 npm install
-cp .env.example .env   # fill in your Firebase web app config + reCAPTCHA Enterprise key
+cp .env.example .env   # fill in your Firebase web app config + reCAPTCHA v3 key
 npm run dev
 ```
 
-1. In the Firebase console: enable **Firebase AI Logic** (Gemini Developer API), register a Web app, and set up **App Check** with reCAPTCHA Enterprise.
+1. In the Firebase console: enable **Firebase AI Logic** (Gemini Developer API), register a Web app, and set up **App Check** with reCAPTCHA v3.
 2. On localhost, copy the App Check debug token from the browser console and add it under *App Check → Apps → Manage debug tokens*.
 3. Click **Try a sample report** (a fictional report), then **Explain my report**. The first run downloads Gemini Nano.
 
