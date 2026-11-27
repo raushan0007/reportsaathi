@@ -30,7 +30,7 @@ Built with the **Firebase AI Logic Web SDK** and its hybrid inference:
 - If Gemini Nano isn't available, the user can opt in to cloud fallback. The text first goes through a client-side PHI scrubber (names, patient IDs, Aadhaar-like numbers, phone numbers, emails, dates, age), then it's sent with `InferenceMode.PREFER_IN_CLOUD` to Gemini in the cloud.
 - Photos are only processed on-device, because names printed on an image can't be removed before upload.
 - Responses stream with `generateContentStream`, and `response.inferenceSource` drives the on-device/cloud badge.
-- **App Check** (reCAPTCHA v3) protects the AI endpoints. **Remote Config** controls the cloud model and target reading level without a redeploy. **Firebase Hosting** serves the app.
+- **App Check** (reCAPTCHA Enterprise) protects the AI endpoints. **Remote Config** controls the cloud model and target reading level without a redeploy. **Firebase Hosting** serves the app.
 
 ### Challenges
 - Deciding the privacy policy *per input*, not per app: text can fall back to the cloud after scrubbing, while images cannot.
