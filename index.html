@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReportSaathi · Understand your scan report, privately</title>
+    <meta name="description" content="Private, on-device AI that explains radiology reports in plain English or Hindi. Built with Firebase AI Logic hybrid inference." />
+  </head>
+  <body>
+    <header>
+      <h1>Report<span>Saathi</span></h1>
+      <p class="tag">Understand your X-ray, CT, MRI or ultrasound report in plain words, privately, on your own device.</p>
+      <span id="deviceState" class="pill">Checking on-device AI…</span>
+    </header>
+
+    <main>
+      <section class="card">
+        <label for="report">Paste your report</label>
+        <textarea id="report" rows="12" placeholder="Paste the FINDINGS and IMPRESSION from your report here…"></textarea>
+
+        <div class="row">
+          <label class="file">📷 Or add a photo of the report
+            <input id="image" type="file" accept="image/png,image/jpeg" />
+          </label>
+          <button id="sample" class="ghost" type="button">Try a sample report</button>
+        </div>
+
+        <div class="row">
+          <label>Explain in
+            <select id="lang">
+              <option value="en">English</option>
+              <option value="hi">हिंदी (Hindi)</option>
+            </select>
+          </label>
+          <label class="check">
+            <input id="allowCloud" type="checkbox" />
+            Allow cloud fallback (personal details removed first)
+          </label>
+        </div>
+
+        <button id="explain" class="primary" type="button">Explain my report</button>
+        <p id="status" class="status" role="status"></p>
+      </section>
+
+      <section class="card result">
+        <div class="result-head">
+          <span id="badge" class="badge" hidden></span>
+          <span id="privacy" class="privacy"></span>
+        </div>
+        <div id="output" class="output" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer>
+      Built with Firebase AI Logic hybrid inference (Gemini Nano on-device, Gemini in the cloud).
+      Not medical advice.
+    </footer>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
