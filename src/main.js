@@ -20,6 +20,7 @@ const els = {
   deviceState: $("deviceState"),
 };
 
+const FALLBACK_CLOUD_MODEL = "gemini-3.5-flash-lite";
 let config = { cloudModel: "gemini-3.8-flash", readingLevel: "a 12-year-old" };
 let deviceModelReady = false;
 
@@ -119,14 +120,31 @@ async function explain() {
       language: els.lang.value,
       readingLevel: config.readingLevel,
     });
-    const stream = await model.generateContentStream(prompt);
-    let acc = "";
-    for await (const chunk of stream.stream) {
-      acc += chunk.text();
-      els.output.innerHTML = renderMarkdown(acc);
+    // In the cloud, fall back to a lighter model if the main one is busy.
+    const cloudModels = canUseDevice
+      ? [null]
+      : [...new Set([config.cloudModel, FALLBACK_CLOUD_MODEL])];
+    let final, usedModel;
+    for (const [i, name] of cloudModels.entries()) {
+      try {
+        const m = name ? makeModel(mode, name) : model;
+        const stream = await m.generateContentStream(prompt);
+        let acc = "";
+        for await (const chunk of stream.stream) {
+          acc += chunk.text();
+          els.output.innerHTML = renderMarkdown(acc);
+        }
+        final = await stream.response;
+        usedModel = name;
+        break;
+      } catch (e) {
+        const busy = /\b(429|500|503)\b|high demand|overloaded|unavailable/i.test(String(e.message || e));
+        if (!busy || i === cloudModels.length - 1) throw e;
+        console.warn(`[ReportSaathi] ${name} busy, trying ${cloudModels[i + 1]}`);
+        setStatus("Cloud model busy, retrying with a lighter model…");
+      }
     }
-    const final = await stream.response;
-    showBadge(final.inferenceSource || (canUseDevice ? "on_device" : "in_cloud"));
+    showBadge(final.inferenceSource || (canUseDevice ? "on_device" : "in_cloud"), usedModel);
     els.output.insertAdjacentHTML(
       "beforeend",
       `<p class="disclaimer">ReportSaathi explains words, it is not medical advice. Always discuss your report with your doctor.</p>`
@@ -140,13 +158,13 @@ async function explain() {
   }
 }
 
-function showBadge(source) {
+function showBadge(source, usedModel) {
   els.badge.hidden = false;
   if (source === "on_device") {
     els.badge.textContent = "⚡ Ran on-device · Gemini Nano";
     els.badge.className = "badge device";
   } else {
-    els.badge.textContent = `☁️ Ran in cloud · ${config.cloudModel}`;
+    els.badge.textContent = `☁️ Ran in cloud · ${usedModel || config.cloudModel}`;
     els.badge.className = "badge cloud";
   }
 }
